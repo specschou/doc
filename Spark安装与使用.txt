@@ -1,0 +1,16 @@
+﻿Spark是一个高效的分布式计算系统，相比Hadoop，它在性能上比Hadoop要高100倍，Spark 是在 Scala 语言中实现的，它将 Scala 用作其应用程序框架。
+1.安装
+	前题:安装好Java与Hadoop并且设置环境变量JAVA_HOME与HADOOP_HOME
+	下载tar包，地址为:http://spark.apache.org/downloads.html
+	解压，并且设置
+		export SPARK_HOME=/home/zhoucy/spark
+		export PATH=$PATH:$SPARK_HOME/bin
+2.有用的命令
+	进入命令行:spark shell
+	读取一个文件:var lines = sc.textFile("/usr/local/data/acquisition/data20150511.log");
+	分隔行:val records = lines.map(_.split("\\|"));
+	过滤:val filtered = records.filter(rec => (rec.length > 5));
+	生成一个新的map:val tuples = filtered.map(rec => (rec(5).toString, 1));
+	合并:val totalTemps = tuples.reduceByKey (_ + _);
+	打印:totalTemps.foreach(println(_));
+	保存:totalTemps.saveAsTextFile("output");

@@ -1,0 +1,10 @@
+﻿安装Hadoop
+1.下载tar包，解压:tar -zxvf 
+2.指定java路径，如果已配置JAVA_HOME则无需配置（查看环境变量命令:env或echo $JAVA_HOME），否则编辑etc/hadoop//hadoop-env.sh文件，export JAVA_HOME=
+3.创建指向Hadoop安装目录的环境变量:HADOOP_INSTALL，然后将Hadoop的bin和sbin目录加到path中，具体如下:
+	export HADOOP_INSTALL=/home/zhoucy/hadoop-2.7.0
+	export PATH=$PATH:$HADOOP_INSTALL/bin:$HADOOP_INSTALL/sbin
+	注:直接在shell下运行export只是临时生效，
+	在/etc/profile文件中添加变量【对所有用户生效（永久的）】(修改文件后要想马上生效还要运行# source /etc/profile不然只能在下次重进此用户时生效。)，
+	在用户目录下的.bash_profile文件中增加变量【对单一用户生效（永久的）】(修改文件后要想马上生效还要运行$ source /home/guok/.bash_profile不然只能在下次重进此用户时生效。)
+4.判断是否安装成功:hadoop version

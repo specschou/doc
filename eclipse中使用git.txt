@@ -1,0 +1,10 @@
+﻿1.安装好本地Git以及与远程服务器连接好，具体请看Git安装与使用
+2.安装Git插件egit，地址为:http://download.eclipse.org/egit/updates/
+3.安装好插件后Open Perspective打开Git，新建一个Git Repository
+4.选中需要上传的项目，Team->Share Project->Git，选中刚才新建的Repository
+5.选中项目Commit，填好注释
+6.Push Branch master，将版本库推送到远程服务器，需要先在远程服务器建一个空的Repository，然后Push，ok.
+7.把远程仓库的项目，克隆到eclipse里面
+	把ecpilse切换到git视图，点击Clone Git repository
+	输入你需要克隆的项目的url地址，选择本地存放地址
+	完成后，用import导入项目到eclipse

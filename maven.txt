@@ -1,0 +1,71 @@
+﻿Eclipse下使用Maven构建项目
+1.安装maven
+	下载地址:http://maven.apache.org/download.cgi，下载zip包，解压缩
+2.配置maven
+	进入Maven安装目录下的conf子目录中，打开settings.xml进行配置修改。
+	修改本地仓库位置:<localRepository>d:/.m2/repository</localRepository>,这个目录结构需要自己创建好,.m2文件夹需要用命令行创建
+	Maven默认的中央仓库里的文件不全。所以，都需要自行添加其它的镜像地址。在settings.xml文件中的“<mirrors>”标签里添加如下内容：
+     <mirror>
+       <id>ibiblio</id>
+       <mirrorOf>central</mirrorOf>
+       <name>Human Readable Name for this Mirror.</name>
+       <url>http://mirrors.ibiblio.org/maven2/</url>
+     </mirror>
+	同时还需要把这个settings.xml文件复制一份到“D:/.m2”目录下。
+3.Eclipse中安装m2eclipse插件
+	依次选择Eclipse菜单栏的“Help”菜单à“Instance NewSoftWare”菜单项
+	添加地址:http://download.eclipse.org/technology/m2e/releases
+	依次选择Eclipse菜单栏的“Window”à“Preferences”菜单项，展开“Maven”目录结点，并选择“Installations”子节点，这里需要关联上一步安装的Maven程序
+	设置自定义的本地仓库，选中“UserSettings”子节点，这边需要修改为我们自定义仓库位置下的settings.xml文件
+4.使用Maven来构建Web项目
+	在eclipse菜单栏中选择“File” “News” “Other”菜单项，就会打开如下对话窗口，在窗口中选择“Maven”节点下“Maven Project”条目
+	选择“Next >”按钮，在这个窗口中选择“maven-archetype-webapp”来创建一个Maven的web项目，再选择“Next>”按钮
+	在“Group Id”中输入项目的基本包名，在“Artifact Id”中输入项目名，其它输入框不用理会。点击“Finish”按钮来完成项目的整个创建过程。
+	“pom.xml”文件就是这个项目的maven配置文件。打开此文件，并在“<build>”标签内添加如下配置：
+		<defaultGoal>install</defaultGoal>
+		<plugins>
+		         <plugin>
+		                   <groupId>org.apache.maven.plugins</groupId>
+		                   <artifactId>maven-surefire-plugin</artifactId>
+		                   <configuration>
+		                            <skip>true</skip>
+		                   </configuration>
+		         </plugin>
+		 
+		         <plugin>
+		                   <groupId>org.apache.maven.plugins</groupId>
+		                   <artifactId>maven-compiler-plugin</artifactId>
+		                   <version>2.5.1</version>
+		                   <configuration>
+		                            <source>1.6</source>
+		                            <target>1.6</target>
+		                            <encoding>UTF-8</encoding>
+		                   </configuration>
+		         </plugin>
+		</plugins>
+	使用Maven添加项目依赖包
+		<dependency>
+		        <groupId>javax.servlet</groupId>
+		        <artifactId>servlet-api</artifactId>
+		        <version>2.5</version>
+		        <scope>provided</scope>
+		</dependency>
+		<dependency>
+		        <groupId>javax.servlet.jsp</groupId>
+		        <artifactId>jsp-api</artifactId>
+		        <version>2.1</version>
+		        <scope>provided</scope>
+		</dependency>
+		<dependency>
+		        <groupId>javax.servlet</groupId>
+		        <artifactId>jstl</artifactId>
+		        <version>1.2</version>
+		</dependency>		
+		注：对Servlet和JSP的API包，在编译web项目时需要使用，而把web项目打包部署到web容器（如Tomcat）中运行时就不需要了。因此，这里把它们的<scope>配置为provided。
+	把Maven项目转换成Eclipse工程
+	选中项目在右键菜单中选择“Properties”
+	选中左边功能树中的“ProjectFacets”节点，然后在对应的右边面板中点击“Convert to faceted from…”
+	在“Project Facet”中进行相应配置，选中Java与Dynamic Web Module
+	如果还需要直接在Eclipse中运行这个web工程，还需要把Maven依赖包添加到本项目类路径中：
+5.使用Maven编译和发布项目
+	在项目中的“pom.xml”文件上点击右键，在弹出的菜单中选择“Run AS”à“Maveninstall”来编译和生成项目

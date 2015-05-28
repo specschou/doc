@@ -1,0 +1,12 @@
+﻿创建用户目录:hadoop fs -mkdir -p hdfs://localhost/user/zhoucy
+复制本地文件夹到hdfs:hdfs dfs -put /home/zhoucy/hadoop-2.7.0/etc/hadoop input
+获取hdfs文件夹到本地:hdfs dfs -get output output
+查看:hdfs dfs -cat output/*
+删除文件:hdfs dfs -rm output/* 
+删除文件夹:hdfs dfs -rmdir output/ 
+复制一个本地文件到hdfs:hadoop fs -copyFromLocal /usr/local/data/acquisition/special20150511.log hdfs://localhost/user/zhoucy/test.txt
+列出各个文件由哪些块构成:hdfs fsck / -files -blocks
+运行jar包:hadoop jar hadoop-examples.jar com.zhoucy.hadoop.practice.h1.PageCount input/special20150511.log output
+	或者:export HADOOP_CLASSPATH=hadoop-examples.jar,hadoop com.zhoucy.hadoop.practice.h1.URLCat hdfs://localhost/user/root/input/hadoop/core-site.xml
+			hadoop jar hadoop-examples.jar com.zhoucy.hadoop.practice.h1.PageCount input/special20150511.log output
+			

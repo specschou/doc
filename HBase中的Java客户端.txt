@@ -1,0 +1,73 @@
+﻿1.将以下代码打成jar包hbase-examples.jar，并上传到服务器上
+2.export HBASE_CLASSPATH=hbase-examples.jar
+3.hbase com.zhoucy.hadoop.practice.h2.ExampleClient
+
+代码附录：
+package com.zhoucy.hadoop.practice.h2;
+
+import java.io.IOException;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Admin;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.util.Bytes;
+
+public class ExampleClient {
+	public static void main(String[] args) throws IOException {
+		Configuration conf = HBaseConfiguration.create();
+		Connection connection = ConnectionFactory.createConnection(conf);
+		Admin admin = connection.getAdmin();
+		try {
+			TableName tableName = TableName.valueOf("test");
+			HTableDescriptor htd = new HTableDescriptor(tableName);
+			HColumnDescriptor hcd = new HColumnDescriptor("data");
+			htd.addFamily(hcd);
+			admin.createTable(htd);
+			HTableDescriptor[] tables = admin.listTables();
+			for (HTableDescriptor table : tables) {
+				System.out.println("table list:" + table);
+			}
+			Table table = connection.getTable(tableName);
+			try {
+				for (int i = 1; i <= 3; i++) {
+					byte[] row = Bytes.toBytes("row" + i);
+					Put put = new Put(row);
+					byte[] columnFamily = Bytes.toBytes("data");
+					byte[] qualifier = Bytes.toBytes(String.valueOf(i));
+					byte[] value = Bytes.toBytes("value" + i);
+					put.addColumn(columnFamily, qualifier, value);
+					table.put(put);
+				}
+				Get get = new Get(Bytes.toBytes("row1"));
+				Result result = table.get(get);
+				System.out.println("get row1 result:" + result);
+				Scan scan = new Scan();
+				ResultScanner scanner = table.getScanner(scan);
+				try {
+					for (Result scannerResult : scanner) {
+						System.out.println("scan:" + scannerResult);
+					}
+				} finally {
+					scanner.close();
+				}
+				admin.disableTable(tableName);
+				admin.deleteTable(tableName);
+			} finally {
+				table.close();
+			}
+		} finally {
+			admin.close();
+		}
+	}
+}

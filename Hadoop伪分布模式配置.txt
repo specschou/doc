@@ -1,0 +1,81 @@
+﻿1.创建或修改以下4个配置文件
+<?xml version="1.0"?>
+<!-- core-site.xml -->
+<configuration>
+	<property>
+		<name>fs.defaultFS</name>
+		<value>hdfs://localhost/</value>
+	</property>
+	<property>  
+	  <name>hadoop.tmp.dir</name>  
+	  <value>/home/zhoucy/data-hadoop</value>  
+	  <description>A base for other temporary directories.</description>  
+	</property> 	
+</configuration>
+<?xml version="1.0"?>
+<!-- hdfs-site.xml -->
+<configuration>
+	<property>
+		<name>dfs.replication</name>
+		<value>1</value>
+	</property>
+</configuration>
+<?xml version="1.0"?>
+<!-- mapred-site.xml -->
+<configuration>
+	<property>
+		<name>mapreduce.framework.name</name>
+		<value>yarn</value>
+	</property>
+</configuration>
+<?xml version="1.0"?>
+<!-- yarn-site.xml -->
+<configuration>
+	<property>
+		<name>yarn.resourcemanager.hostname</name>
+		<value>localhost</value>
+	</property>
+	<property>
+		<name>yarn.nodemanager.aux-services</name>
+		<value>mapreduce_shuffle</value>
+	</property>
+</configuration>
+2.配置SSH
+	基于空口令创建一个新的SSH密钥，以实现无密码登录localhost
+	% ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+	% cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+	运行% ssh localhost判断是否成功
+3.格式化HDFS文件系统
+	% hdfs namenode -format
+4.启动守护进程
+	% start-dfs.sh &
+	% start-yarn.sh &
+	% mr-jobhistory-daemon.sh start historyserver	&
+	如果需要启动非默认配置文件则如下
+	% start-dfs.sh --config /home/zhoucy/hadoop-2.7.0/etc/pseudodistributed_hadoop/ &
+	% start-yarn.sh --config /home/zhoucy/hadoop-2.7.0/etc/pseudodistributed_hadoop/ &
+	% mr-jobhistory-daemon.sh --config /home/zhoucy/hadoop-2.7.0/etc/pseudodistributed_hadoop/ start historyserver	&
+	运行以上命令后你将在本机上启动以下守护进行:
+	一个namenode, 一个备用namenode, 一个datanode (HDFS), 一个resource manager, 一个node manager (YARN), 和一个history server (MapReduce)
+	可以通过日志文件判断是否已经启动
+	查看logs/datanode日志，发现FATAL org.apache.hadoop.hdfs.server.datanode.DataNode: Initialization failed for Block pool,All specified directories are failed to load.错误
+	删除hadoop.tmp.dir下所有内容
+	或者是查看以下web地址:
+	namenode:http://localhost:50070/ 
+	resource manager:http://172.25.41.231::8088/#这个需要在yarn-site.xml中配置yarn.resourcemanager.webapp.address属性为172.25.41.231，否则只能在本机访问
+	history server:http://localhost:19888/
+	开启出现ssh无法解析主机名等错误,VM warning: You have loaded library /home/hadoop/2.2.0/lib/native/libhadoop.so.1.0.0 which might have disabled stack guard. The VM will try to fix the stack guard now.，
+	需要在/etc/profile添加以下代码
+	export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_INSTALL/lib/native
+	export HADOOP_OPTS="-Djava.library.path=$HADOOP_INSTALL/lib"
+	然后source /etc/profile
+5.测试是否安装成功
+	hadoop fs -mkdir -p hdfs://localhost/user/
+	hdfs dfs -put /home/zhoucy/hadoop-2.7.0/etc/hadoop input
+	hadoop fs -copyFromLocal /usr/local/data/acquisition/special20150511.log input
+	hadoop jar /home/zhoucy/hadoop-2.7.0/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.0.jar grep input/hadoop output 'dfs[a-z.]+'
+	hdfs dfs -get output output
+6.终止守护进程
+	% mr-jobhistory-daemon.sh stop historyserver
+	% stop-yarn.sh
+	% stop-dfs.sh

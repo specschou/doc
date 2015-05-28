@@ -1,0 +1,13 @@
+﻿Hive是一个构建在Hadoop上的数据仓库框架，可以用类SQL语句在Hadoop中查询，Hive把SQL查询转换为一系列在Hadoop集群上运行的MapReduce作业。
+1.安装
+	前题:安装好Java与Hadoop并且设置环境变量JAVA_HOME与HADOOP_HOME
+	下载tar包，地址为:http://www.apache.org/dyn/closer.cgi/hive/
+	解压，并且设置HIVE_INSTALL，export PATH=$PATH:$HIVE_INSTALL/bin
+2.有用的命令
+	% hive -f script.q,可以运行脚本文件
+	% hive -e 'select * from dummp',可以运行行内嵌入命令
+	hive > !ls,使用!可以运行主机命令
+	hive > dfs -ls,使用dfs访问Hadoop文件系统
+3.创建表并导入数据
+	create table pages (platform String, ip String) row format delimited fields terminated by '|';
+	load data inpath 'input/a.txt' overwrite into table pages;

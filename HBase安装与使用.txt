@@ -1,0 +1,18 @@
+﻿HBase是一个在Hadoop上开发的面向列的分布式数据库，如果需要实时地随机访问超大规模数据集，就可以使用HBase
+1.安装
+	前题:安装好Java与Hadoop并且设置环境变量JAVA_HOME与HADOOP_HOME
+	下载tar包，地址为:http://www.apache.org/dyn/closer.cgi/hbase/
+	解压，并且设置HBASE_HOME，export PATH=$PATH:$HBASE_HOME/bin
+	注:设置环境变量方法，vi /etc/profile，修改之后执行source /etc/profile，如果要查看执行env
+2.启动与关闭
+	% start-hbase.sh,启动一个实例
+	% hbase shell,进入HBase命令行
+	% stop-hbase.sh,关闭一个实例
+3.操作
+	创建表:create 'test', 'data'
+	列出所有表:list
+	插入数据:put 'test', 'row1', 'data:1', 'value1'
+	列出表内容:scan 'test'
+	设置表为离线:disable 'test'
+	删除表:drop 'test'
+	设置表为在线:enable 'test'
