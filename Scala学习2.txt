@@ -1,0 +1,3 @@
+﻿定长数组:val nums = new Array[Int](10)
+变长数组:val b = new ArrayBuffer[Int]
+Scala中处理数组与数组列表可以用相同的方法

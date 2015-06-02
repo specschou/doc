@@ -1,0 +1,12 @@
+﻿新建一个scala object
+val声明一个值（常量），var声明一个变量，不需要给出类型，但是必须初始化，以推断出类型
+也可以指定类型，放在声明的后面: val s : String = "Hello"
+想使用数值类型查看: RichInt,RichDouble;字符串查看:StringOps
+Unit类型类似于void，值为()
+Scala中几乎所有构造出来的语法结构都有值
+{}包含一系列表达式，其结果是最后一个表达式
+赋值语句的值是Unit
+循环:while语句与Java类似,for语句则不同,for(i <- 表达式)表示i遍历表达式所有值
+Scala支持函数:def abs(x : Double) = if (x > 0) x else -x,必须给出参数的类型，如果不是递归，不需要指定返回类型
+当val声明为lazy时，初始化被推迟，直到首次对它取值
+throw表达式有特殊类型Nothing
